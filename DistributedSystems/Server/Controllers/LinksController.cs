@@ -1,10 +1,8 @@
-using System.Text;
 using DistributedSystems.Server.Data;
 using DistributedSystems.Server.Data.Entities;
 using DistributedSystems.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using RabbitMQ.Client;
 
 namespace DistributedSystems.Server.Controllers;
 
