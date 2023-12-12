@@ -1,7 +1,9 @@
 using DistributedSystems.Server.Data;
+using DistributedSystems.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
 builder.Services.AddDbContext<ApplicationContext>(/*options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"))*/);
 builder.Services.AddControllers();

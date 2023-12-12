@@ -1,0 +1,24 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.9"
+services:
+  app:
+    build:
+      context: "/Users/kseniya/RiderProjects/DistributedSystems/DistributedSystems"
+      dockerfile: "./Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/DistributedSystems.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "/Users/kseniya/.nuget/packages"
+      NUGET_FALLBACK_PACKAGES: "/Users/kseniya/.nuget/packages"
+    image: "distributedsystems:dev"
+    ports: []
+    volumes:
+    - "/Users/kseniya/.nuget/packages:/root/.nuget/fallbackpackages"
+    - "/Users/kseniya/RiderProjects/DistributedSystems/DistributedSystems:/app:rw"
+    - "/Users/kseniya/RiderProjects/DistributedSystems:/src:rw"
+    working_dir: "/app"
