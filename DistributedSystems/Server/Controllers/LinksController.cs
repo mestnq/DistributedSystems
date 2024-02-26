@@ -25,7 +25,7 @@ public class LinksController : ControllerBase
     {
         var link = new Link
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Url = url,
             Status = "NOT refresh!"
         };
@@ -45,7 +45,7 @@ public class LinksController : ControllerBase
 
     // PUT /links/ для обновления статуса ссылки
     [HttpPut("refresh-status")]
-    public async Task<ActionResult<Link>> PutStatusLink([FromQuery] Guid id)
+    public async Task<ActionResult<Link>?> PutStatusLink([FromQuery] string id)
     {
         var link = await context.Links.FindAsync(id);
         if (link == null)

@@ -14,30 +14,28 @@ public class RabbitMqService : IRabbitMqService
 
     public void SendMessage(string message)
     {
-        var factory = new ConnectionFactory
+        var factory = new ConnectionFactory()
         {
-            // HostName = "localhost",
+            HostName = "rabbitmq",
             UserName = "rmuser",
-            Password = "rmpassword"
+            Password = "rmpassword",
+            VirtualHost = "/"
         };
-        using (var connection = factory.CreateConnection())
-        using (var channel = connection.CreateModel())
-        {
-            channel.QueueDeclare(queue: "test",
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
 
-            var body = Encoding.UTF8.GetBytes(message);
+        var connection = factory.CreateConnection();
 
-            channel.BasicPublish(exchange: "",
-                routingKey: "test",
-                basicProperties: null,
-                body: body);
-        }
+        using var channel = connection.CreateModel();
 
-        // var factory = new ConnectionFactory 
+        channel.QueueDeclare("links", durable: true, exclusive: false);
+
+        var jsonString = JsonSerializer.Serialize(message);
+        var body = Encoding.UTF8.GetBytes(jsonString);
+
+        channel.BasicPublish("", "links", body: body);
+        Console.WriteLine($" [x] Sent {message}");
+    }
+
+    // var factory = new ConnectionFactory 
         // {
         //     // HostName = "localhost",
         //     UserName = "rmuser",
@@ -54,5 +52,4 @@ public class RabbitMqService : IRabbitMqService
         //     basicProperties: null,
         //     body: body);
         // Console.WriteLine($" [x] Sent {message}");
-    }
 }

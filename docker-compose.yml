@@ -3,12 +3,15 @@ version: "3.9"
 services:
   rabbitmq:
     image: rabbitmq:management
+    hostname: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=rmuser
       - RABBITMQ_DEFAULT_PASS=rmpassword
     ports:
       - "15672:15672"
       - "5672:5672"
+    networks:
+      - consumer_some-net
   
   postgres:
     image: postgres:latest
@@ -21,6 +24,8 @@ services:
       - ./docker:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+    networks:
+      - consumer_some-net
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -32,11 +37,13 @@ services:
       - "5050:80"
     volumes:
       - pgadmindata:/var/lib/pgadmin
+    networks:
+      - consumer_some-net
 
   app:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./DistributedSystems/Dockerfile
     ports:
       - "8000:80"
     environment:
@@ -44,6 +51,22 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    networks:
+      - consumer_some-net
+  
+  consumer:
+    build:
+      context: .
+      dockerfile: ./Consumer/Dockerfile
+    ports:
+      - "8001:80"
+    networks:
+      - consumer_some-net
+
+networks:
+  consumer_some-net: {
+    driver: bridge
+  }
 
 volumes:
   pgdata:
