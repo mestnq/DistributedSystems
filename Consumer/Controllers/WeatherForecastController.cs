@@ -46,7 +46,7 @@ public class WeatherForecastController : ControllerBase
             
             Console.WriteLine(message);
 
-            Task.Run(async () => await _httpService.UpdateHttpStatusLink(message));
+            Task.Run(async () => await _httpService.UpdateHttpStatusLink(message.Replace("\"", "")));
         };
 
         channel.BasicConsume(queue: "links", autoAck: true, consumer: consumer);
