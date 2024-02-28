@@ -21,7 +21,7 @@ public class WeatherForecastController : ControllerBase
         };
         var connection = factory.CreateConnection();
         var channel = connection.CreateModel();
-
+        //TODO: НЕ СДЕЛАЛА «делает запрос к ним и сохраняет HTTP-статус ответа через новый эндпоинт приложения.»
         var queueName = "links";
         
         var s = channel.QueueDeclare(
