@@ -62,6 +62,15 @@ services:
       - "8001:80"
     networks:
       - consumer_some-net
+  
+  consumer-2:
+    build:
+      context: .
+      dockerfile: ./Consumer/Dockerfile
+    ports:
+      - "8002:80"
+    networks:
+      - consumer_some-net
 
 networks:
   consumer_some-net: {
