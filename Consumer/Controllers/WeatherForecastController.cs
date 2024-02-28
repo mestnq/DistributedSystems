@@ -1,4 +1,5 @@
 using System.Text;
+using Consumer.Services;
 using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -9,6 +10,13 @@ namespace Consumer.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
+    private IHttpService _httpService;
+
+    public WeatherForecastController(IHttpService httpService)
+    {
+        _httpService = httpService;
+    }
+
     [HttpGet(Name = "Start")]
     public void Listen() //TODO: РЕФАКТОРИНГ!!!
     {
@@ -19,25 +27,28 @@ public class WeatherForecastController : ControllerBase
             Password = "rmpassword",
             VirtualHost = "/"
         };
-        var connection = factory.CreateConnection();
-        var channel = connection.CreateModel();
-        //TODO: НЕ СДЕЛАЛА «делает запрос к ним и сохраняет HTTP-статус ответа через новый эндпоинт приложения.»
-        var queueName = "links";
         
-        var s = channel.QueueDeclare(
-            queue: queueName,
+        var connection = factory.CreateConnection();  
+        var channel = connection.CreateModel();
+
+        channel.QueueDeclare(
+            queue: "links",
             durable: true,
             exclusive: false);
         
         var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, ea) =>
+
+        consumer.Received += (model, eventArgs) =>
         {
-            byte[] body = ea.Body.ToArray();
+            var body = eventArgs.Body.ToArray();
+
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($" [x] {message}");
+            
+            Console.WriteLine(message);
+
+            Task.Run(async () => await _httpService.UpdateHttpStatusLink(message));
         };
-        channel.BasicConsume(queue: queueName,
-            autoAck: true,
-            consumer: consumer);
+
+        channel.BasicConsume(queue: "links", autoAck: true, consumer: consumer);
     }
 }

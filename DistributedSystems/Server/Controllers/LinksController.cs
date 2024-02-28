@@ -76,12 +76,12 @@ public class LinksController : ControllerBase
 
     private void SendMessageToRabbitMq(Link link)
     {
-        var integrationEventData = JsonConvert.SerializeObject(new
-        {
-            id = link.Id,
-            url = link.Url,
-            newStatus = link.Status
-        });
-        mqService.SendMessage(integrationEventData);
+        // var integrationEventData = JsonConvert.SerializeObject(new
+        // {
+        //     id = link.Id,
+        //     url = link.Url,
+        //     newStatus = link.Status
+        // });
+        mqService.SendMessage(link.Url);
     }
 }
